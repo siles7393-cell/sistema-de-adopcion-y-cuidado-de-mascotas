@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Listado de Veterinarios</title>
+  <style>
+    table {
+      width: 70%;
+      border-collapse: collapse;
+      margin: 20px auto;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+    }
+    th {
+      background: #f4f4f4;
+    }
+    tr:hover {
+      background-color: #e0f7fa;
+    }
+    #formTurno {
+      width: 50%;
+      margin: 20px auto;
+      text-align: center;
+      display: none;
+    }
+    input[type="date"], button {
+      padding: 8px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Veterinarios Disponibles</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Teléfono</th>
+      </tr>
+    </thead>
+    <tbody id="cuerpoTabla">
+
+    </tbody>
+  </table>
+
+  <div id="formTurno">
+    <h3>Pedir Turno con <span id="veterinarioSeleccionado"></span></h3>
+    <input type="date" id="fechaTurno" required>
+    <button onclick="pedirTurno()">Pedir Turno</button>
+  </div>
+
+  <script>
+    let veterinarioSeleccionadoId = null;
+
+    fetch("pedirTurno.php")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("cuerpoTabla").innerHTML = html;
+
+        document.querySelectorAll("#cuerpoTabla tr").forEach(tr => {
+          tr.addEventListener("click", () => {
+            veterinarioSeleccionadoId = tr.dataset.id;
+            const nombre = tr.dataset.nombre;
+            const apellido = tr.dataset.apellido;
+            document.getElementById("veterinarioSeleccionado").textContent = nombre + " " + apellido;
+            document.getElementById("formTurno").style.display = "block";
+          });
+        });
+      })
+      .catch(err => console.error("Error cargando datos:", err));
+
+    function pedirTurno() {
+      const fecha = document.getElementById("fechaTurno").value;
+      if (!fecha || !veterinarioSeleccionadoId) {
+        alert("Seleccione un veterinario y una fecha.");
+        return;
+      }
+
+      fetch("guardarTurno.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `idVeterinario=${veterinarioSeleccionadoId}&fecha=${fecha}`
+      })
+      .then(res => res.text())
+      .then(msg => alert(msg))
+      .catch(err => console.error(err));
+    }
+  </script>
+</body>
+</html>

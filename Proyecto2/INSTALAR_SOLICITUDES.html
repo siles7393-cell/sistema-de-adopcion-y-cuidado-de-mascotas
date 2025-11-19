@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema de Solicitudes - Guía de Instalación</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
+    .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    h1 { color: #2196F3; border-bottom: 3px solid #2196F3; padding-bottom: 10px; }
+    h2 { color: #333; margin-top: 30px; }
+    .step { background: #f9f9f9; padding: 15px; margin: 15px 0; border-left: 4px solid #2196F3; border-radius: 4px; }
+    .step-number { background: #2196F3; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 10px; }
+    .button { display: inline-block; background: #4CAF50; color: white; padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; margin: 10px 10px 10px 0; font-size: 16px; }
+    .button:hover { background: #45a049; }
+    .button-secondary { background: #2196F3; }
+    .button-secondary:hover { background: #0b7dda; }
+    .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 4px; }
+    .success { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 15px 0; border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    table th, table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+    table th { background: #f0f0f0; font-weight: bold; }
+    .code { background: #f4f4f4; padding: 10px; border-radius: 4px; font-family: monospace; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📋 Sistema de Solicitudes de Adopción</h1>
+    <p>Guía de instalación y uso del nuevo sistema de gestión de adopciones con solicitudes pendientes</p>
+
+    <div class="warning">
+      <strong>⚠️ IMPORTANTE:</strong> Debes ejecutar la instalación ANTES de usar el sistema
+    </div>
+
+    <h2>PASO 1: Instalación Automática (RECOMENDADO)</h2>
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Haz clic en el botón de instalación:</strong>
+      <p>El sistema ejecutará automáticamente el script SQL para crear las tablas necesarias.</p>
+      <a href="instalar_sistema.php" class="button">▶️ Instalar Sistema</a>
+    </div>
+
+    <h2>PASO 2: Verificación</h2>
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Después de instalar, verifica que todo funcione:</strong>
+      <ul>
+        <li>✓ Intenta adoptar una mascota desde "Catálogo"</li>
+        <li>✓ Accede como REFUGIO y ve "Gestionar Solicitudes"</li>
+        <li>✓ Deberías ver la solicitud en estado PENDIENTE</li>
+        <li>✓ Acepta la solicitud y verifica que se agreguen 50 puntos al usuario</li>
+      </ul>
+    </div>
+
+    <h2>Cómo Funciona el Sistema</h2>
+    
+    <h3>FLUJO ADOPTANTE:</h3>
+    <table>
+      <tr>
+        <th>Paso</th>
+        <th>Acción</th>
+        <th>Resultado</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>Ver catálogo y seleccionar mascota</td>
+        <td>Botón "Adoptar"</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Llenar formulario (DNI, domicilio, edad, etc.)</td>
+        <td>Formulario validado</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Enviar solicitud</td>
+        <td>Se crea solicitud en estado <strong>PENDIENTE</strong></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Ir a "Mis Solicitudes de Adopción"</td>
+        <td>Ver estado: PENDIENTE / ACEPTADA / RECHAZADA</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Si ACEPTADA → Pedir turno veterinario</td>
+        <td>Puede pagar con 50 puntos recibidos</td>
+      </tr>
+    </table>
+
+    <h3>FLUJO REFUGIO:</h3>
+    <table>
+      <tr>
+        <th>Paso</th>
+        <th>Acción</th>
+        <th>Resultado</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>Ir a "Gestionar Solicitudes de Adopción"</td>
+        <td>Ver lista de solicitudes de todas las mascotas</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Ver datos del adoptante (DNI, edad, domicilio, etc.)</td>
+        <td>Información completa para evaluar</td>
+      </tr>
+      <tr>
+        <td>3a (ACEPTAR)</td>
+        <td>Clic en "Aceptar"</td>
+        <td>
+          ✓ Solicitud → ACEPTADA<br>
+          ✓ Mascota → ADOPTADO<br>
+          ✓ Usuario recibe 50 PUNTOS<br>
+          ✓ Otras solicitudes → RECHAZADAS
+        </td>
+      </tr>
+      <tr>
+        <td>3b (RECHAZAR)</td>
+        <td>Clic en "Rechazar"</td>
+        <td>
+          ✓ Solicitud → RECHAZADA<br>
+          ✓ Mascota vuelve a DISPONIBLE (si no hay más pendientes)
+        </td>
+      </tr>
+    </table>
+
+    <h2>Estados de la Solicitud</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 20px 0;">
+      <div style="background: #fff3cd; padding: 15px; border-radius: 4px; border-left: 4px solid #ffc107;">
+        <strong style="color: #856404;">⏳ PENDIENTE</strong><br>
+        Esperando respuesta del refugio
+      </div>
+      <div style="background: #d4edda; padding: 15px; border-radius: 4px; border-left: 4px solid #28a745;">
+        <strong style="color: #155724;">✅ ACEPTADA</strong><br>
+        ¡La mascota es tuya! +50 puntos
+      </div>
+      <div style="background: #f8d7da; padding: 15px; border-radius: 4px; border-left: 4px solid #f44336;">
+        <strong style="color: #721c24;">❌ RECHAZADA</strong><br>
+        Lamentablemente no fue aceptada
+      </div>
+    </div>
+
+    <h2>Solución de Problemas</h2>
+    
+    <div class="warning">
+      <strong>Error: "Table 'solicitudes_adopcion' doesn't exist"</strong><br>
+      <strong>Solución:</strong> Ejecuta el instalador: <a href="instalar_sistema.php">instalar_sistema.php</a>
+    </div>
+
+    <div class="warning">
+      <strong>Error: "Column 'estado_adopcion' doesn't exist"</strong><br>
+      <strong>Solución:</strong> El instalador debería haberlo creado. Intenta reinstalar.
+    </div>
+
+    <div class="warning">
+      <strong>No veo mis solicitudes</strong><br>
+      <strong>Solución:</strong> 
+      <ul>
+        <li>Verifica que hayas iniciado sesión como ADOPTANTE</li>
+        <li>Ve a "Mis Solicitudes de Adopción"</li>
+        <li>Comprueba que hayas enviado alguna solicitud desde "Catálogo"</li>
+      </ul>
+    </div>
+
+    <h2>Archivos del Sistema</h2>
+    <p>El siguiente diagrama muestra cómo se conectan los archivos:</p>
+    <div class="code">
+ADOPTANTE:
+  adoptante.php (catálogo)
+        ↓
+  procesar_adopcion.php (crear solicitud)
+        ↓
+  solicitudes_adopcion (tabla BD)
+
+REFUGIO:
+  refugio.html
+        ↓
+  gestion_solicitudes_refugio.html (UI)
+        ↓
+  gestion_solicitudes_refugio.php (API - obtiene solicitudes)
+        ↓
+  procesar_solicitud_refugio.php (procesa aceptar/rechazar)
+        ↓
+  solicitudes_adopcion (tabla BD)
+
+ADOPTANTE (ESTADO):
+  mis_solicitudes_adopcion.html (UI)
+        ↓
+  mis_solicitudes_adopcion.php (API - obtiene estado)
+        ↓
+  solicitudes_adopcion (tabla BD)
+    </div>
+
+    <h2>Siguientes Pasos</h2>
+    <ol>
+      <li>Haz clic en "Instalar Sistema" arriba ↑</li>
+      <li>Verifica que la instalación fue exitosa</li>
+      <li>Prueba el flujo completo</li>
+      <li>¡Listo para usar!</li>
+    </ol>
+
+    <div class="success">
+      <strong>✅ ¿Preguntas?</strong><br>
+      Revisa el archivo <strong>README_SOLICITUDES.txt</strong> para más detalles
+    </div>
+
+    <hr style="margin: 30px 0;">
+    <a href="index.html" class="button button-secondary">← Volver al Inicio</a>
+  </div>
+</body>
+</html>

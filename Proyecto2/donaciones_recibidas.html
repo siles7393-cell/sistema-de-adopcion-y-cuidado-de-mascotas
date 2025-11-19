@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Donaciones Recibidas</title>
+</head>
+<body>
+  <h2>Donaciones Recibidas</h2>
+  <div id="tablaDonaciones"></div>
+  <script>
+    fetch('donaciones_recibidas.php')
+      .then(res => res.text())
+      .then(html => document.getElementById('tablaDonaciones').innerHTML = html);
+  </script>
+
+   <div class="volver">
+    <a href="refugio_ABM.html"><button>atras</button></a>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+
+  <form action="cerrarSesion.php" method="post">
+    <button type="submit">Cerrar sesión</button>
+  </form>
+  
+  <title>Listado de Mascotas</title>
+  <style>
+    table {
+      width: 80%;
+      border-collapse: collapse;
+      margin: 20px auto;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: #f4f4f4;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      left: 0; top: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center; align-items: center;
+    }
+    .modal-content {
+      background: #fff; padding: 20px; border-radius: 5px;
+      min-width: 350px;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Mascotas Registradas</h2>
+  <div style="text-align:center; margin-bottom:20px;">
+    <a href="rufugio_altas.html"><button>Cargar Mascota</button></a>
+    <a href="gestion_solicitudes_refugio_view.php"><button>Gestionar solicitudes de adopción</button></a>
+  </div>
+  <div style="text-align:center; margin-bottom:20px;">
+    <a href="donaciones_recibidas.html"><button>Visualizar donaciones</button></a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Foto</th>
+        <th>Título</th>
+        <th>Nombre</th>
+        <th>Edad (meses)</th>
+        <th>Descripción</th>
+        <th>Raza</th>
+        <th>Peso en kg</th>
+        <th>Género</th>
+        <th>Tipo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="cuerpoTabla">
+
+    </tbody>
+  </table>
+
+  
+
+  <div class="modal" id="modalEditar">
+    <div class="modal-content">
+      <h3>Modificar Mascota</h3>
+      <form id="formEditar" enctype="multipart/form-data">
+        <input type="hidden" name="id" id="edit_id">
+        <label>Titulo: <input type="text" name="titulo" id="edit_titulo" required></label><br><br>
+        <label>Nombre: <input type="text" name="nombre" id="edit_nombre" required></label><br><br>
+        <label>Raza: <input type="text" name="raza" id="edit_raza" required></label><br><br>
+        <label>Edad(por meses): <input type="number" name="edad" id="edit_edad" min="0"></label><br><br>
+        <label>Peso(en kg): <input type="text" name="peso" id="edit_peso"></label><br><br>
+        <label>Descripción: <input type="text" name="descripcion" id="edit_descripcion"></label><br><br>
+        <label>Género:
+          <select name="genero" id="edit_genero" required>
+            <option value="">--Seleccionar--</option>
+            <option value="macho">Macho</option>
+            <option value="hembra">Hembra</option>
+          </select>
+        </label><br><br>
+        <label>Tipo:
+          <select name="tipo" id="edit_tipo" required>
+            <option value="">--Seleccionar--</option>
+            <option value="perro">Perro</option>
+            <option value="gato">Gato</option>
+          </select>
+        </label><br><br>
+        <label>Foto: <input type="file" name="foto" id="edit_foto" accept="image/*"></label><br><br>
+        <img id="edit_img_preview" src="" alt="Foto actual" style="max-width:100px; display:none;"><br><br>
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="cerrarModal()">Cancelar</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function cargarMascotas() {
+      fetch("refugio_mostrar.php")
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById("cuerpoTabla").innerHTML = html;
+          agregarEventos();
+        })
+        .catch(err => console.error("Error cargando datos:", err));
+    }
+
+    function agregarEventos() {
+      document.querySelectorAll(".btn-borrar").forEach(btn => {
+        btn.onclick = function() {
+          if (confirm("¿Seguro que deseas borrar esta mascota?")) {
+            fetch("refugio_borrar.php", {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: "id=" + btn.dataset.id
+            })
+            .then(res => res.text())
+            .then(msg => {
+              alert(msg);
+              cargarMascotas();
+            });
+          }
+        };
+      });
+
+      document.querySelectorAll(".btn-editar").forEach(btn => {
+        btn.onclick = function() {
+          document.getElementById("edit_titulo").value = btn.getAttribute('data-titulo');
+          document.getElementById("edit_id").value = btn.getAttribute('data-id');
+          document.getElementById("edit_nombre").value = btn.getAttribute('data-nombre');
+          document.getElementById("edit_edad").value = btn.getAttribute('data-edad');
+          document.getElementById("edit_descripcion").value = btn.getAttribute('data-descripcion');
+          document.getElementById("edit_raza").value = btn.getAttribute('data-raza');
+          document.getElementById("edit_peso").value = btn.getAttribute('data-peso');
+          document.getElementById("edit_genero").value = btn.getAttribute('data-genero');
+          document.getElementById("edit_tipo").value = btn.getAttribute('data-tipo');
+          document.getElementById("edit_img_preview").src = btn.getAttribute('data-foto');
+          document.getElementById("modalEditar").style.display = "flex";
+        };
+      });
+    }
+
+    function cerrarModal() {
+      document.getElementById("modalEditar").style.display = "none";
+      document.getElementById("formEditar").reset();
+      document.getElementById("edit_img_preview").src = "";
+    }
+
+    document.getElementById("edit_foto").onchange = function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const preview = document.getElementById("edit_img_preview");
+          preview.src = ev.target.result;
+          preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    document.getElementById("formEditar").onsubmit = function(e) {
+      e.preventDefault();
+      
+      // Validación básica
+      if (!document.getElementById("edit_nombre").value.trim()) {
+        alert("El nombre es obligatorio");
+        return false;
+      }
+      if (!document.getElementById("edit_raza").value.trim()) {
+        alert("La raza es obligatoria");
+        return false;
+      }
+      if (!document.getElementById("edit_genero").value) {
+        alert("Selecciona un género");
+        return false;
+      }
+      if (!document.getElementById("edit_tipo").value) {
+        alert("Selecciona un tipo");
+        return false;
+      }
+      
+      const formData = new FormData(this);
+      fetch("refugio_modificar.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.text())
+      .then(msg => {
+        alert(msg);
+        if (!msg.startsWith("Error")) {
+          cerrarModal();
+          cargarMascotas();
+        }
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        alert("Error en la conexión: " + err);
+      });
+    };
+
+    cargarMascotas();
+  </script>
+</body>
+</html>

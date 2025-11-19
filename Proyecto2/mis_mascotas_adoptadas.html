@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <form action="cerrarSesion.php" method="post">
+    <button type="submit">Cerrar sesión</button>
+  </form> 
+  <title>Mis Mascotas Adoptadas</title>
+  <style>
+    .catalogo { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .card {
+      border: 1px solid #ccc; border-radius: 8px; padding: 10px; width: 220px; text-align: center;
+      box-shadow: 2px 2px 8px #eee;
+    }
+    .card img { max-width: 180px; max-height: 120px; border-radius: 6px; }
+    .volver { margin: 20px; text-align: center; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Mis Mascotas Adoptadas</h2>
+  <div class="volver">
+    <a href="adoptante_index.html"><button>atras</button></a>
+  </div>
+  <div class="catalogo" id="misMascotas">
+  
+  </div>
+
+
+  <div class="modal" id="modalDetalles" style="display:none; position:fixed; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+    <div class="modal-content" id="contenidoDetalles" style="background:#fff; padding:20px; border-radius:5px; min-width:320px;"></div>
+  </div>
+
+  <script>
+    function cargarMisMascotas() {
+      fetch('mis_mascotas_adoptadas.php')
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById('misMascotas').innerHTML = html;
+          agregarEventosDetalles();
+        });
+    }
+
+    function agregarEventosDetalles() {
+      document.querySelectorAll('.btn-detalles').forEach(btn => {
+        btn.onclick = function() {
+          fetch('detalle_mascota.php?id=' + btn.dataset.id)
+            .then(res => res.text())
+            .then(html => {
+              document.getElementById('contenidoDetalles').innerHTML = html;
+              document.getElementById('modalDetalles').style.display = 'flex';
+            });
+        };
+      });
+    }
+
+
+    window.onclick = function(event) {
+      if (event.target == document.getElementById('modalDetalles')) {
+        document.getElementById('modalDetalles').style.display = 'none';
+      }
+    };
+
+    cargarMisMascotas();
+  </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Refugios</title>
+</head>
+<body>
+  <h2>Registro de Refugios</h2>
+  <a href="loginRefugio.html"><button>Regresar a Login</button></a>
+
+  <form action="registroRefugio.php" method="POST">
+    <label for="nombre">Nombre del Refugio:</label>
+    <input type="text" name="NombreRefugio" required><br><br>
+
+    <label for="ubicacion">Ubicación:</label>
+    <input type="text" name="UbicacionRefugio" required><br><br>
+
+    <label for="telefono">Teléfono:</label>
+    <input type="tel" name="TelefonoRefugio" required><br><br>
+
+    <label for="username">Usuario:</label>
+    <input type="text" name="UsernameRefugio" required><br><br>
+
+    <label for="password">Contraseña:</label>
+    <input type="password" name="PasswordRefugio" required><br><br>
+
+    <button type="submit">Registrar</button>
+  </form>
+</body>
+</html>

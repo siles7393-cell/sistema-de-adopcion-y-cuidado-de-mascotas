@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <form action="cerrarSesion.php" method="post">
+    <button type="submit">Cerrar sesión</button>
+  </form>
+  <title>Listado de Veterinarios</title>
+  <style>
+    table { width: 90%; border-collapse: collapse; margin: 20px auto; }
+    th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+    th { background: #f4f4f4; }
+    .volver { text-align:center; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Veterinarios Registrados</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Fecha Nacimiento</th>
+        <th>Matrícula</th>
+        <th>Teléfono</th>
+        <th>Usuario</th>
+        <th>Contraseña</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="cuerpoTabla">
+    </tbody>
+  </table>
+
+  <div class="volver">
+    <a href="administrador.html"><button>atras</button></a>
+  </div>
+
+  <script>
+    function cargarVeterinarios() {
+      fetch("mostrarVeterinarios.php")
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById("cuerpoTabla").innerHTML = html;
+          agregarEventos();
+        })
+        .catch(err => console.error("Error:", err));
+    }
+
+    function agregarEventos() {
+      document.querySelectorAll(".btn-borrar").forEach(btn => {
+        btn.onclick = function() {
+          if (!confirm("¿Seguro?")) return;
+
+          fetch("eliminarVeterinarios.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "ID=" + btn.dataset.id
+          })
+          .then(res => res.text())
+          .then(msg => {
+            if (msg === "OK") {
+              alert("Eliminado correctamente");
+              cargarVeterinarios();
+            } else {
+              alert(msg);
+            }
+          })
+          .catch(err => console.error("Error:", err));
+        };
+      });
+    }
+
+    cargarVeterinarios();
+  </script>
+</body>
+</html>
